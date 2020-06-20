@@ -37,7 +37,10 @@ class Inference:
 
         # change to grayscale if the model is in grayscale
         if self.inp_shape[3] == 1 and image.shape[2] != 1:
-            image = rgb_to_grayscale(image)
+            if image.shape[2] == 3:
+                image = rgb_to_grayscale(image)
+            elif image.shape[2] == 4:
+                image = rgb_to_grayscale(image[:, :, :3])
 
         image = img_to_array(image)
         image = np.expand_dims(image, axis=0)

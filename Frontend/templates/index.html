@@ -1,0 +1,73 @@
+<!doctype html>
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+  </script>
+
+  <script>
+    function upload() {
+      var fd = new FormData();
+      var files = $('#imageInput')[0].files[0];
+      fd.append('image', files);
+
+      $.ajax({
+        type: 'post',
+        url: 'https://backend-bangkit-jkt-1-e.herokuapp.com/predict',
+        data: fd,  processData: false,
+        contentType: false,
+        success: function(response) {
+          if (response.success) {
+            $("#pred").text(response.result.label);
+            $("#pred-probs").text(JSON.stringify(response.result.probs));
+            $("#error-message").text("");
+          } else {
+            $("#pred").text("");
+            $("#pred-probs").text("");
+            $("#error-message").text(response.error)
+          }
+        }
+      });
+    };
+
+    function readImage() {
+      const input = $("#imageInput")[0];
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          $("#chosenImage").attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+        $("#chosenImage").attr('alt', input.files[0].name);
+      }
+    }
+
+  </script>
+</head>
+
+<body>
+  <title>Predict The Expression</title>
+  <div>
+    <h1>Upload an image</h1>
+    <form id="imageForm">
+      <img id="chosenImage" src="#" alt=""/>
+      <input type="file" id="imageInput" name="Image" onchange="readImage()"/>
+    </form>
+    <button onclick="upload()">Upload</button>
+  </div>
+  <div>
+    <span id="error-message"></span>
+  </div>
+  <div>
+    <h1>Prediksi</h1>
+    <span id="pred"></span>
+    <span id="pred-probs"></span>
+  </div>
+</body>
+
+<style>
+  #chosenImage {
+    max-width: 50%;
+  }
+</style>

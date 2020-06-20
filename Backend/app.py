@@ -4,6 +4,7 @@ import tensorflow as tf
 
 from flask import Flask, request, send_file
 from inference import Inference
+from flask_cors import CORS, cross_origin
 
 
 # initiat the inference, doing this outside any
@@ -11,6 +12,7 @@ from inference import Inference
 inference = Inference("./cnn_do.h5")
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
@@ -26,22 +28,25 @@ def predict(image):
 
 @app.route("/predict", methods=["POST"])
 def get_prediction():
-    image = request.files["image"]
+    if "image" in request.files:
+        image = request.files["image"]
 
-    in_memory_file = io.BytesIO()
-    image.save(in_memory_file)
+        in_memory_file = io.BytesIO()
+        image.save(in_memory_file)
 
-    try:
-        tf_image = tf.io.decode_image(in_memory_file.getvalue())
-    except:
-        return {"success": False, "error": "Fail to treat this as an image"}
+        try:
+            tf_image = tf.io.decode_image(in_memory_file.getvalue())
+        except:
+            return {"success": False, "error": "Fail to treat this as an image"}
 
-    try:
-        result = predict(tf_image)
-    except:
-        return {"success": False, "error": "Fail to predict the image"}
+        try:
+            result = predict(tf_image)
+        except:
+            return {"success": False, "error": "Fail to predict the image"}
 
-    return {"success": True, "result": result}
+        return {"success": True, "result": result}
+    else:
+        return {"success": False, "error": "Image is not found"}
 
 
 if __name__ == "__main__":
