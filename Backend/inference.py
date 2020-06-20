@@ -7,6 +7,8 @@ import numpy as np
 
 class Inference():
     
+    # The labels in the exact order when training,
+    # Please do not change this.
     labels = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
     
     def __init__(self, modelpath):
@@ -14,7 +16,6 @@ class Inference():
             self.model = load_model(modelpath)
         except:
             print("Model not Found")
-
         self.inp_shape = self.model.input.shape.as_list()
 
     def predict(self, image):
@@ -24,9 +25,19 @@ class Inference():
         return self.labels[pred]
 
     def preprocess(self, image):
-        image = resize(image, (self.inp_shape[1], self.inp_shape[2]))
-        image = rgb_to_grayscale(image)
+        image = resize(image, (self.inp_shape[1], self.inp_shape[2])) #rescale to match the input size
+        
+        #change to grayscale if the model is in grayscale
+        if self.inp_shape[3] == 1:
+            image = rgb_to_grayscale(image)
+
         image = img_to_array(image)
         image = np.expand_dims(image, axis=0)
         return image
     
+
+
+if __name__ == '__main__':
+    dummy_image = np..random.random((50,50,3))
+    inference = Inference('./cnn_do.h5')
+    print(inference.predict(dummy_image))
