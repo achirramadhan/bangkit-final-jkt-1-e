@@ -1,5 +1,4 @@
 absl-py==0.9.0
-astor==0.8.1
 astunparse==1.6.3
 cachetools==4.1.0
 certifi==2020.4.5.2
@@ -17,7 +16,6 @@ idna==2.9
 importlib-metadata==1.6.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
-Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.2
 Markdown==3.2.2
 MarkupSafe==1.1.1
@@ -34,7 +32,7 @@ scipy==1.4.1
 six==1.15.0
 tensorboard==2.2.2
 tensorboard-plugin-wit==1.6.0.post3
-tensorflow==2.2.0
+tensorflow-cpu==2.2.0
 tensorflow-estimator==2.2.0
 termcolor==1.1.0
 urllib3==1.25.9

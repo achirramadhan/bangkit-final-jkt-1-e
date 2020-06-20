@@ -31,9 +31,17 @@ def get_prediction():
     in_memory_file = io.BytesIO()
     image.save(in_memory_file)
 
-    tf_image = tf.io.decode_image(in_memory_file.getvalue())
-    result = predict(tf_image)
-    return {"result": result}
+    try:
+        tf_image = tf.io.decode_image(in_memory_file.getvalue())
+    except:
+        return {"success": False, "error": "Fail to treat this as an image"}
+
+    try:
+        result = predict(tf_image)
+    except:
+        return {"success": False, "error": "Fail to predict the image"}
+
+    return {"success": True, "result": result}
 
 
 if __name__ == "__main__":
