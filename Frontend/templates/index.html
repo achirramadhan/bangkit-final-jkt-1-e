@@ -5,6 +5,10 @@
   </script>
 
   <script>
+    function upperCamelCase(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    }
+
     function upload() {
       var fd = new FormData();
       var files = $('#imageInput')[0].files[0];
@@ -17,12 +21,33 @@
         contentType: false,
         success: function(response) {
           if (response.success) {
-            $("#pred").text(response.result.label);
-            $("#pred-probs").text(JSON.stringify(response.result.probs));
+            $(".error-container").hide();
+            $(".pred-container").show();
+            $(".pred-probs").show();
+
+            $("#pred").text(upperCamelCase(response.result.label));
+
+            const probObjects = response.result.probs;
+            $("#preds-table tr").remove();
+
+            const header = "<tr><th>Class</th><th>Probability</th></tr>";
+            $("#preds-table").append(header);
+
+            for (const emotion in probObjects) {
+              const emotionRow = upperCamelCase(emotion);
+              const emotionProb = probObjects[emotion].toFixed(12);
+              const row = `<tr><td>${emotionRow}</td><td>${emotionProb}</td></tr>`;
+              $("#preds-table").append(row);
+            }
+
             $("#error-message").text("");
           } else {
+            $(".error-container").show();
+            $(".pred-container").hide();
+            $(".pred-probs").hide();
+
             $("#pred").text("");
-            $("#pred-probs").text("");
+            $("#preds-table tr").remove();
             $("#error-message").text(response.error)
           }
         }
@@ -47,27 +72,126 @@
 </head>
 
 <body>
-  <title>Predict The Expression</title>
+  <title>Human Face Expression Predictor</title>
+  <div class="flex main-title">
+    <h1>Human Face Expression Predictor</h1>
+  </div>
   <div>
-    <h1>Upload an image</h1>
+    <div class="flex upload-title">
+      <h2>Upload an Image</h2>
+    </div>
     <form id="imageForm">
-      <img id="chosenImage" src="#" alt=""/>
-      <input type="file" id="imageInput" name="Image" onchange="readImage()"/>
+      <div>
+        <div class="flex image-display">
+          <img id="chosenImage" src="#" alt=""/>
+        </div>
+        <div class="flex image-form">
+          <input type="file" id="imageInput" name="Image" onchange="readImage()"/>
+        </div>
+      </div>
     </form>
-    <button onclick="upload()">Upload</button>
+    <div class="flex upload-button">
+      <button onclick="upload()">Predict</button>
+    </div>
   </div>
-  <div>
-    <span id="error-message"></span>
+  <div class="result-container">
+    <div class="flex error-container" style="display: none;">
+      <span id="error-message"></span>
+    </div>
+    <div class="flex pred-container" style="display: none;">
+      <span id="pred"></span>
+    </div>
+    <div class="flex pred-probs" style="display: none;">
+      <table id="preds-table">
+      </table>
+    </div>
   </div>
-  <div>
-    <h1>Prediksi</h1>
-    <span id="pred"></span>
-    <span id="pred-probs"></span>
+  <div class="flex ack-container">
+    <p class="acknowledge">This project is made by Group JKT1-E for Final Project Bangkit 2020.</p>
   </div>
 </body>
 
 <style>
+  body {
+    background-color:cornsilk;
+    font-family: Lato;
+  }
+
+  h1, h2, p {
+    text-align: center;
+  }
+
+  h1 {
+    margin: 18px 0px;
+  }
+
+  h2 {
+    margin: 12px 0px;
+  }
+  
   #chosenImage {
     max-width: 50%;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .upload-title,
+  .main-title,
+  .image-display,
+  .image-form,
+  .upload-button,
+  .pred-container,
+  .pred-probs,
+  .error-container,
+  .ack-container {
+    justify-content: center;
+  }
+
+  .image-display {
+    padding: 10px;
+  }
+
+  .upload-button {
+    padding-top: 15px;
+  }
+
+  #pred {
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 5px 10px;
+  }
+
+  .error-container {
+    padding: 7px;
+    margin: 20px;
+    background-color:salmon;
+    border-radius: 10px;
+  }
+
+  .pred-container {
+    padding-top: 15px;
+  }
+
+  .pred-probs {
+    padding-top: 10px;
+  }
+
+  .ack-container {
+    padding: 10px;
+  }
+
+  .acknowledge {
+    text-align: center;
+    font-size: 11px;
   }
 </style>
