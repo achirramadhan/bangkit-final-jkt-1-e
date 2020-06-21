@@ -1,5 +1,6 @@
 # Local Development
-1. Check which version of Python your computer has by executing
+1. Open terminal or command prompt.
+2. Check which version of Python your computer has by executing
    ```
    python --version
    ```
@@ -11,8 +12,7 @@
    If it shows Python 3, substitute all `python` commands below with `python3`.
    
    Otherwise, install Python 3.
-2. Open terminal or command prompt.
-3. Create virtual environment in this folder by executing
+3. Create virtual environment in this directory by executing
    ```
    python -m venv env
    ```
